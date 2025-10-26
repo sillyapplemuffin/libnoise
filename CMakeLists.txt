@@ -1,0 +1,30 @@
+cmake_minimum_required(VERSION 3.15)
+project(libnoise LANGUAGES CXX)
+
+option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+option(BUILD_LIBNOISE_UTILS "Build utility functions for use with libnoise" ON)
+option(BUILD_LIBNOISE_EXAMPLES "Build libnoise examples" ON)
+option(BUILD_LIBNOISE_DOCUMENTATION "Create doxygen documentation for developers" OFF)
+
+add_subdirectory(noise)
+
+if(BUILD_LIBNOISE_UTILS)
+    add_subdirectory(noiseutils)
+endif()
+
+if(BUILD_LIBNOISE_EXAMPLES)
+    if(BUILD_LIBNOISE_UTILS)
+        add_subdirectory(examples)
+    else()
+        message(SEND_ERROR "Examples require noiseutils to be built. Please enable BUILD_LIBNOISE_UTILS.")
+    endif()
+endif()
+
+if(BUILD_LIBNOISE_DOCUMENTATION)
+    find_package(Doxygen)
+    if(DOXYGEN_FOUND)
+        add_subdirectory(noise/doc)
+    else()
+        message(WARNING "Doxygen not found, documentation will not be built.")
+    endif()
+endif()
